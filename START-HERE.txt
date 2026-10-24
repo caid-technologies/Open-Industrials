@@ -1,0 +1,21 @@
+Open Industrials — CAID runtime integration
+
+Repository: https://github.com/caid-technologies/Open-Industrials
+Source revisions and scope: docs/upstream-integration.md
+
+WORKBENCH
+Install Node.js 22.18 or newer, then run:
+  npm ci
+  npm run dev
+Open http://127.0.0.1:5173
+
+PHYSICS WORKSPACE
+See docs/physics-workspace.md for the pinned Python environment, the
+three-body example, origin-locked CoACD/MJCF export, local service,
+control transactions and deterministic replay verification.
+
+GAME, SHARED SIMULATION AND FIELD-LAB
+See docs/mcp-game-runtime.md and docs/architecture/ for the separate
+SQLite services, native account setup, persistence and evidence limits.
+
+No npm/PyPI publishing or production deployment is included.

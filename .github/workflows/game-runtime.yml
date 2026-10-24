@@ -1,0 +1,122 @@
+name: Game runtime
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  mcp:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:materials
+      - run: git diff --exit-code -- packages/material-science/dist
+      - run: npm run test:materials
+      - run: npm run test:simulation
+      - run: npm run test:mcp-game
+      - run: npm run test:mcp
+  manufacturing:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:manufacturing
+  units:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:units
+  combat:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:combat
+  victory:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:victory
+  downstream-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      OI_CHECKOUT: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: isayahc/tower-defense
+          ref: 6e7debd1f0113646e00d2d8e4365f84f35768284
+          path: .integration/tower-defense
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            .integration/tower-defense/package-lock.json
+      - run: npm ci
+      - run: npm ci
+        working-directory: .integration/tower-defense
+      - run: npm run check:materials
+        working-directory: .integration/tower-defense
+      - run: npm run test:integration
+        working-directory: .integration/tower-defense
+      - run: npx playwright install --with-deps chromium
+        working-directory: .integration/tower-defense
+      - run: npm run test:browser:results
+        working-directory: .integration/tower-defense
+      - run: npm run test:browser:full
+        working-directory: .integration/tower-defense
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: adopted-runtime-desktop-mobile-evidence
+          path: .integration/tower-defense/test-results/
+          if-no-files-found: ignore
+          retention-days: 7

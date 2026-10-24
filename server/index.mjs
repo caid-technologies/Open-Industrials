@@ -1,3 +1,4 @@
+import { physicsProxy, physicsUpgrade } from './physics-proxy.mjs';
 import express from 'express';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -15,12 +16,13 @@ app.use('/api', (req, res, next) => {
   if (origin) {
     try {
       const url = new URL(origin);
-      if (!['127.0.0.1', 'localhost'].includes(url.hostname) || !['http:', 'https:'].includes(url.protocol)) return res.status(403).json({ error: 'Use the local Mergence workbench.' });
+      if (!['127.0.0.1', 'localhost'].includes(url.hostname) || !['http:', 'https:'].includes(url.protocol)) return res.status(403).json({ error: 'Use the local OpenIndustries workbench.' });
     } catch { return res.status(403).json({ error: 'Invalid origin.' }); }
   }
   res.set('Cache-Control', 'no-store');
   next();
 });
+app.use('/physics', physicsProxy);
 app.use(express.json({ limit: '64kb' }));
 app.get('/api/health', async (_req, res) => res.json(await formHealth(root)));
 app.post('/api/form/feedback', async (req, res) => {
@@ -47,4 +49,6 @@ app.use('/api', (_req, res) => res.status(404).json({ error: 'Unknown API endpoi
 app.use(express.static(resolve(root, 'dist')));
 app.get('/{*path}', (_req, res) => res.sendFile(resolve(root, 'dist/index.html')));
 app.use((error, _req, res, _next) => res.status(error.status || 500).json({ error: error.type === 'entity.too.large' ? 'Request is too large.' : 'Invalid request or server error.' }));
-app.listen(Number(process.env.PORT || 8787), '127.0.0.1', () => console.log(`Mergence server: http://127.0.0.1:${process.env.PORT || 8787}`));
+const listener = app.listen(Number(process.env.PORT || 8787), '127.0.0.1', () => console.log(`OpenIndustries server: http://127.0.0.1:${process.env.PORT || 8787}`));
+
+listener.on('upgrade', physicsUpgrade);

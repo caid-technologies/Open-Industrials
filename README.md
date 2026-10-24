@@ -2,7 +2,7 @@
 
 **Arrange hardware in a 3D space, animate how it moves, and share the layout for review.**
 
-Mergence is a spatial workbench that runs locally in your browser for planning fabrication shops, manufacturing spaces, and laboratories. Import equipment from [Form](https://github.com/caid-technologies/Form-OSS) or a STEP CAD file, place it in a room at real-world scale, and preview a workflow before moving physical equipment.
+Open Industrials is a spatial workbench that runs locally in your browser for planning fabrication shops, manufacturing spaces, and laboratories. Import equipment from [Form](https://github.com/caid-technologies/Form-OSS) or a STEP CAD file, place it in a room at real-world scale, and preview a workflow before moving physical equipment.
 
 [Run locally](#run-locally) · [Try the local demo](#try-the-local-demo) · [Documentation](#documentation)
 
@@ -10,7 +10,7 @@ Mergence is a spatial workbench that runs locally in your browser for planning f
 
 A hardware model describes an individual piece of equipment. Planning a workspace also means deciding where that equipment goes, what sits around it, and how people or materials move through the room.
 
-Mergence brings those models into one editable scene. A maker can compare workbench arrangements, a manufacturing team can illustrate material flow, and a lab team can review an equipment layout or sampling route. The output is a room layout, an animation, and files that others can reopen or review.
+Open Industrials brings those models into one editable scene. A maker can compare workbench arrangements, a manufacturing team can illustrate material flow, and a lab team can review an equipment layout or sampling route. The output is a room layout, an animation, and files that others can reopen or review.
 
 ## Try the local demo
 
@@ -19,7 +19,7 @@ Follow [Run locally](#run-locally) to install the project and start `npm run dev
 To make your own layout, open the [local workbench](http://127.0.0.1:5173):
 
 1. Choose **Space brief / local demo**, select a maker, manufacturing, or biofab space, and click **Build space layout**. This creates a preset layout with labeled equipment placeholders and a material-flow animation.
-2. Or choose **Import project** / **Drop files or browse** to open your own Form JSON, STEP model, or saved Mergence scene.
+2. Or choose **Import project** / **Drop files or browse** to open your own Form JSON, STEP model, or saved Open Industrials scene.
 3. Adjust the room and equipment, then use **Animate**, **GIF studio**, or **Export scene JSON** to inspect and share the result.
 
 You can import, edit, animate, and export locally without signing in. Optional cloud features use GitHub sign-in and a configured Supabase backend; the workbench itself runs on your machine.
@@ -37,21 +37,21 @@ You can import, edit, animate, and export locally without signing in. Optional c
 | Save and reopen | Export portable scene JSON, restore local drafts, or save named cloud scenes with revision history, comparison, and restore. |
 | Work with agents locally | Use optional Form/MCP workflows to author equipment, create or revise saved scenes from an external agent, and return animation feedback to Form. |
 
-## How Form and Mergence work together
+## How Form and Open Industrials work together
 
-### Generate and transfer projects in OpenIndustries
+### Generate and transfer projects in Open Industrials
 
 - **Generate Forma project → Build with Form** checks the local Forma installation before enabling generation. Choose **Deterministic demo** for a sample without credentials, or **Live generation** with your server-configured provider and model. The resulting equipment is added to the current room, with its design, BOM, and validation data retained.
 - **Export selected Forma project** downloads the selected equipment as `.forma.json`, using the same Hardware IR shape as Forma's JSON export. Referenced STEP/CAD files remain separate; room placement and animation belong to the OI project.
 - **Export OI project** downloads a portable `.oi.json` containing the room, available equipment geometry, instance names/transforms/visibility, retained Forma design data, and animation. **Import OI project** opens it on a fresh browser without an account. Unsaved room changes are protected by the existing save/discard/cancel prompt.
-- Existing `mergence-scene.json` and `astra.scene` v1 files still open. The **Export scene JSON** action uses the same portable OI export. Missing geometry remains marked missing; exporting cannot restore unavailable source files.
+- Existing legacy scene JSON and `astra.scene` v1 files still open. The **Export scene JSON** action uses the same portable OI export. Missing geometry remains marked missing; exporting cannot restore unavailable source files.
 
 **Hosted generation:** the current Vercel build serves only the browser app; it does not run the Node/Python generator. It supports both project file workflows. Generation controls explain how to use the local workbench instead of silently disappearing. See [local generation setup](docs/development.md#local-form-generation).
 
-**Form authors the equipment; Mergence places and reviews it in a space.** Form OSS provides hardware generation, validation, and compiled project data. Mergence imports that output and adds room layout, instance placement, animation, and visual review.
+**Form authors the equipment; Open Industrials places and reviews it in a space.** Form OSS provides hardware generation, validation, and compiled project data. Open Industrials imports that output and adds room layout, instance placement, animation, and visual review.
 
 1. **Create or bring equipment.** Author and compile a project in Form, or use an existing STEP file from another CAD tool.
-2. **Import it into Mergence.** Select the Form JSON and any referenced STEP files together. Standalone STEP files also work.
+2. **Import it into Open Industrials.** Select the Form JSON and any referenced STEP files together. Standalone STEP files also work.
 3. **Arrange and animate.** Place equipment in the room and add keyframes to illustrate its motion or a workflow.
 4. **Save or share.** Export a portable scene, render a GIF plus review metadata, or save a cloud scene.
 5. **Iterate when needed.** In the optional local agent workflow, send animation feedback to Form, review the revised design, and reimport its compiled artifact.
@@ -67,6 +67,7 @@ See the [workspace guide](docs/workspace.md) for the full editing workflow and t
 | Automatic local draft | The current browser/device | Returning to work after a refresh. This is separate from a cloud save. |
 | Device asset library | The current browser/device | Reusing equipment and its GIF previews across layouts. |
 | Portable scene JSON | A file you export | Reopening or transferring a scene with its geometry and animation, without cloud services. |
+| Local persistent scenes (MCP) | SQLite metadata/revisions and local geometry files | Set `ASTRA_SCENE_BACKEND=local` and `ASTRA_SCENE_TOOLS_ENABLED=true`; [setup and portable export](docs/mcp-scenes.md#local-persistence-without-supabase). No cloud credentials needed. |
 | Cloud scene | Your signed-in Supabase account | Saving named scenes across devices. Enable **Include cloud geometry** when saving if the other device needs the models. |
 | Cloud files | Optional private Supabase Storage | Explicitly uploading geometry bundles, GIF previews, and supported source attachments. |
 
@@ -76,11 +77,11 @@ Browser storage is subject to quota and eviction, so export a scene file for a p
 
 ### Browser workbench
 
-Install **Node.js 22** and Git, then run:
+Install **Node.js 22.18 or newer** and Git, then run:
 
 ```bash
-git clone https://github.com/caid-technologies/Form-Industries.git
-cd Form-Industries
+git clone https://github.com/caid-technologies/Open-Industrials.git
+cd Open-Industrials
 npm ci
 npm run dev
 ```
@@ -109,9 +110,17 @@ Copy [`.env.example`](.env.example) to `.env` when you need configuration. Resta
 | GitHub sign-in and cloud scenes | Configure Supabase Auth/Postgres and set `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. See [Auth/database setup](supabase/README.md). |
 | Private cloud geometry and GIFs | Apply the storage migrations and set `VITE_CLOUD_STORAGE_ENABLED=true`. See the [storage guide](docs/cloud-storage.md). |
 | Disable local generation | Set `VITE_FORM_GENERATION_ENABLED=false` for browser-only deployments. The generation panel explains local setup; import/export stays available. |
-| Local agents and CLI | See [OpenCode/MCP setup](docs/development.md#optional-form-mcp-demo), [scene authoring through MCP](docs/mcp-scenes.md), and the [Mergence CLI](docs/development.md#astra-cli). |
+| Local agents and CLI | See [OpenCode/MCP setup](docs/development.md#optional-form-mcp-demo), [scene authoring through MCP](docs/mcp-scenes.md), and the [Open Industrials CLI](docs/development.md#astra-cli). |
 
 Only public Supabase browser configuration belongs in `VITE_` variables. Provider credentials and Supabase service-role keys must stay out of the browser bundle.
+
+## Persistent runtime hosting
+
+For an always-on simulation backend, use the [single-server deployment guide](docs/persistent-runtime.md).
+It includes a systemd service, HTTPS proxy configuration, private persistent SQLite storage,
+worker readiness checks, and backup/restore verification. The browser may disconnect while
+supported modeled jobs continue. A host and domain still need to be provisioned; this is
+separate from the browser-only hosted workbench.
 
 ## Technology and repository map
 
@@ -128,13 +137,13 @@ Only public Supabase browser configuration belongs in `VITE_` variables. Provide
 
 ## Current scope and limitations
 
-Mergence is a working prototype for spatial planning and visual review. Keep these boundaries in mind when evaluating the demo:
+Open Industrials is a working prototype for spatial planning and visual review. Keep these boundaries in mind when evaluating the demo:
 
 - **Animation is visual.** Keyframes illustrate movement; they do not provide physics simulation, collision guarantees, electrical revalidation, or manufacturing approval.
 - **Space briefs use presets and planning envelopes.** These placeholders represent equipment positions and sizes. Replace them with Form-authored projects or CAD for detailed review.
 - **The cleanroom route is illustrative.** Its access schedule is example data, and the mostly fused robot CAD uses whole-robot approach/retract motion to approximate sampling. See the [example notes](public/examples/cleanroom/README.md).
 - **Imports have practical limits.** Equipment imports are capped at 25 MiB per file, 75 MiB per batch, and 2 million vertices per asset. Large assemblies and STEP variants still need broader validation.
-- **Companion CAD must be selected explicitly.** Mergence does not automatically fetch remote CAD URLs or server-local paths. Missing CAD uses labeled envelopes when the project provides them, or reports an error.
+- **Companion CAD must be selected explicitly.** Open Industrials does not automatically fetch remote CAD URLs or server-local paths. Missing CAD uses labeled envelopes when the project provides them, or reports an error.
 - **Agent integration is optional and local.** The local workbench supports imports and visual review; the Form generation and feedback bridge uses the local API server. Design changes go through an explicit review and reimport loop.
 
 ## Development checks
@@ -148,6 +157,7 @@ npm run test:scene
 npm run test:workspace
 npm run test:mcp
 npm run test:mcp-scenes
+npm run test:local-scenes
 npm run test:scene-history
 npm run test:mcp-agent-workflows
 ```
@@ -156,13 +166,24 @@ For browser smoke tests, run `npm start` in another terminal after building, the
 
 Live cloud tests need a dedicated Supabase test project and test-only credentials; follow the [workspace](docs/workspace.md#verification) and [storage](docs/cloud-storage.md#verification) guides.
 
+## Physics and simulation
+
+The local [Physics workspace](docs/physics-workspace.md) pairs origin-locked GLB/3D Tiles visuals with CoACD collision hulls and headless MuJoCo. It streams compact poses to Three.js and records full-precision states and control receipts in SQLite for replay. Native SQLite game, shared simulation and durable FIELD-LAB services are also included. See the [integration scope and source revision](docs/upstream-integration.md) and [verification results and screenshots](docs/integration-verification.md).
+
 ## Documentation
 
 - [Workspace guide](docs/workspace.md) — editing, animation, persistence, missing-geometry recovery, and the inspector.
+- [Geospatial interchange](tools/geospatial/README.md) — static OI scenes to 3D Tiles 1.1, CesiumJS and an independent Three.js viewer, with geographic placement and provenance checks.
 - [Form handoff contract](docs/form-handoff.md) — compiled artifacts, supported formats, provenance, and CAD resolution.
 - [Revision history and restore](docs/scene-history.md) — compare saved versions, restore a new head, and preserve exact geometry bindings.
 - [Cross-agent walkthrough](docs/mcp-agent-workflows.md) — deterministic Grok/ChatGPT/Codex fixtures, local agent setup, and create/update/reopen commands.
 - [External-agent scene authoring](docs/mcp-scenes.md) — MCP setup, typed tools, revision URLs, and the deterministic cleanroom fixture.
+- [Finite resource accounting](docs/architecture/simulation-resources.md) — shared reservation lifecycle, exact units and conserved inventories.
+- [Durable job scheduling](docs/architecture/simulation-jobs.md) — server-time checkpoints, bounded catch-up, resource waits and interruption controls.
+- [Simulation event history](docs/architecture/simulation-events.md) — atomic private history, authorized snapshots and bounded replay/cursor semantics.
+- [Shared runtime adoption](docs/architecture/shared-runtime-adoption.md) — versioned game compatibility and a real one-operator work-cell HTTP/MCP service; remaining #33 integration is explicit.
+- [Simulation domain boundary](docs/architecture/simulation-domain-boundary.md) — typed contracts, trusted domain modules and [transactional commands](docs/architecture/transactional-simulation-commands.md); runtime extraction remains incremental.
+- [Authoritative city-dump runtime](docs/mcp-game-runtime.md) — authenticated two-player matches, private material inspection, durable processing and database scheduler setup.
 - [Development and integration guide](docs/development.md) — local generation, MCP, CLI, import contracts, and GIF details.
 - [Scene links](docs/scene-links.md) — private scene/revision URLs, expiring shared links, and deployment steps.
 - [Cloud storage guide](docs/cloud-storage.md) — private asset transfers, setup, limits, and lifecycle.
@@ -174,3 +195,26 @@ Live cloud tests need a dedicated Supabase test project and test-only credential
 Form OSS / Form Core is used under **MPL-2.0**; preserve applicable notices and obligations when reusing upstream code. STEP conversion uses `occt-import-js` and its OpenCascade/WebAssembly distribution; retain their bundled license notices. GIF encoding uses `gifenc` (MIT), and the test decoder is `omggif` (MIT).
 
 The cleanroom robot and workbench source projects declare their mechanical CAD under **CERN-OHL-S-2.0**; see the [example provenance notes](public/examples/cleanroom/README.md). Upstream STEP test geometry is fetched by the smoke test rather than bundled in this repository.
+
+## Upstream attribution
+
+This CAID integration retains the Mapped-Assembly implementation. Its upstream citation is:
+
+```bibtex
+@software{mapped_assembly_open_industries_2026,
+  author = {{Mapped Assembly}},
+  title = {OpenIndustries: Spatial workbench for hardware and manufacturing-system planning},
+  year = {2026},
+  url = {https://github.com/Mapped-Assembly/Open-Industries},
+  note = {Open-source software}
+}
+```
+
+
+### Durable FIELD-LAB runtime
+
+The [FIELD-LAB-01 service](docs/architecture/field-lab-runtime.md) runs a modeled one-operator
+lab day with SQLite jobs, finite supplies/deliveries and exact water/energy accounting.
+Run `npm run test:field-lab` for durable evidence matching all six frozen scenarios, or
+`npm run field-lab:server` for the local authenticated API. Scene animation, scientific
+validation and physical instrument control have separate boundaries documented there.
