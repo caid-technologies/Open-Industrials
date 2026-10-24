@@ -1,12 +1,24 @@
 {
-  "name": "mergence",
+  "name": "open-industrials",
   "version": "0.1.0",
-  "private": true,
+  "description": "Spatial workbench for hardware and manufacturing-system planning",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caid-technologies/Open-Industrials.git"
+  },
+  "bugs": {
+    "url": "https://github.com/caid-technologies/Open-Industrials/issues"
+  },
+  "homepage": "https://github.com/caid-technologies/Open-Industrials#readme",
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "type": "module",
   "bin": {
     "astra": "cli/astra.mjs"
   },
   "scripts": {
+    "test:mcp-game": "node --import tsx scripts/game-robots-test.ts && node --import tsx scripts/game-spatial-sensing-test.ts && node --import tsx scripts/game-world-test.ts && node --import tsx scripts/mcp-game-test.ts && node --import tsx scripts/game-all-waste-test.ts",
     "test:project-files": "node --import tsx scripts/project-files-test.ts",
     "test:project-files-browser": "node --import tsx scripts/project-files-browser-test.ts",
     "test:room-transitions": "node --import tsx scripts/room-transitions-test.ts",
@@ -15,7 +27,7 @@
     "test:camera-depth": "node --import tsx scripts/camera-depth-test.ts",
     "postinstall": "node scripts/prepare-vendor.mjs",
     "dev": "concurrently -k -n api,web \"node --env-file-if-exists=.env server/index.mjs\" \"vite --host 127.0.0.1\"",
-    "build": "tsc --noEmit && tsc --noEmit -p tsconfig.mcp.json && vite build",
+    "build": "tsc --noEmit && tsc --noEmit -p tsconfig.mcp.json && tsc -p tsconfig.simulation.json && vite build",
     "start": "node --env-file-if-exists=.env server/index.mjs",
     "test": "node scripts/smoke.mjs",
     "test:e2e": "node scripts/smoke.mjs",
@@ -37,6 +49,7 @@
     "test:fullscreen": "node scripts/fullscreen-smoke.mjs && node scripts/fullscreen-import-smoke.mjs",
     "test:scene-links": "node --import tsx scripts/scene-links-test.ts",
     "test:scene-links-browser": "node --import tsx scripts/scene-links-browser-test.ts",
+    "test:local-scenes": "node --import tsx scripts/local-scenes-test.ts",
     "test:mcp-scenes": "node --import tsx scripts/mcp-scenes-test.ts",
     "test:mcp-scenes-browser": "node --import tsx scripts/mcp-scenes-test.ts --browser",
     "test:scene-history": "node --import tsx scripts/scene-history-test.ts",
@@ -45,7 +58,21 @@
     "test:mcp-agent-workflows-browser": "node --import tsx scripts/mcp-agent-workflows-test.ts --browser",
     "demo:mcp-scene": "node scripts/replay-scene-workflow.mjs",
     "test:form-workflows": "node --import tsx scripts/form-workflows-test.ts",
-    "test:form-workflows-browser": "node --import tsx scripts/form-workflows-browser-test.ts"
+    "test:form-workflows-browser": "node --import tsx scripts/form-workflows-browser-test.ts",
+    "game:server": "node --env-file-if-exists=.env server/game-service.mjs",
+    "simulation:server": "node --env-file-if-exists=.env --import tsx server/simulation-service.ts",
+    "test:simulation": "tsc -p tsconfig.simulation.json && node --import tsx --test tests/simulation/*.test.ts",
+    "build:materials": "tsc -p packages/material-science/tsconfig.json",
+    "test:materials": "node --import tsx --test packages/material-science/tests/*.test.ts && node --import tsx scripts/game-materials-test.ts",
+    "field-lab:server": "node --env-file-if-exists=.env --import tsx server/field-lab-service.ts",
+    "test:field-lab": "node --import tsx scripts/field-lab-durable-test.ts",
+    "test:manufacturing": "node --import tsx scripts/game-manufacturing-test.ts",
+    "test:units": "node --import tsx scripts/game-manufacturing-test.ts --units",
+    "test:combat": "node --import tsx scripts/game-manufacturing-test.ts --combat",
+    "test:victory": "node --import tsx scripts/game-manufacturing-test.ts --victory",
+    "test:runtime-deployment": "tsc -p tsconfig.simulation.json && node --import tsx --test tests/simulation/deployment.test.ts",
+    "test:physics-protocol": "node --import tsx scripts/physics-protocol-test.ts",
+    "test:physics-browser": "node scripts/physics-browser-test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
@@ -57,7 +84,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.180.0",
-    "tsx": "^4.20.0"
+    "tsx": "^4.20.0",
+    "@openindustries/material-science": "file:packages/material-science"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
@@ -72,5 +100,6 @@
     "supabase": "2.117.0",
     "typescript": "^5.9.0",
     "vite": "^6.4.1"
-  }
+  },
+  "private": true
 }
