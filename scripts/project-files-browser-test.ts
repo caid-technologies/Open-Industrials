@@ -39,7 +39,7 @@ try {
     await page.route('**/api/generations/test-job', route => route.fulfill({ json: { status: 'succeeded', project: fixture } }));
   }
   await page.goto('http://127.0.0.1:4186');
-  await expect(page).toHaveTitle(/OpenIndustries/);
+  await expect(page).toHaveTitle(/Open Industrials/);
   await expect(page.getByRole('button', { name: 'Import OI project', exact: true })).toBeEnabled();
   await expect(page.locator('canvas')).toBeVisible();
   await expect(page.locator('vite-error-overlay')).toHaveCount(0);

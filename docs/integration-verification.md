@@ -17,6 +17,7 @@ Python 3.12, MuJoCo 3.6.0, CoACD 1.0.14 and NumPy 2.2.6. See
 | Victory | Actual recovered stock through launcher/ammunition manufacture to tower destruction, durable result and post-match rejection | Passed |
 | FIELD-LAB | Durable execution matches all six frozen scenario timelines and finite-resource accounting | Passed |
 | Scenes and agents | Local SQLite restart; MCP scenes; SQL revision history and ownership; Grok/ChatGPT/Codex protocol fixtures and cross-client handoff | Passed; local fixtures, no live model/cloud calls |
+| Workbench browser | Project import/export, Form handoffs, animation/GIF pixels, room transitions, stale-response fencing and desktop/mobile layouts | Passed with CAID branding |
 | Physics | 9 Python tests, including origin preservation, separate concave hulls, contacts, byte-exact Float64 replay, corrupted history, transactional rollback, process restart, worker lock and request boundaries | Passed |
 | Pose protocol | Float32 binary decoding, lengths, body counts, finite values and quaternion validation | Passed |
 | Physics browser | Workbench HTTP/WebSocket proxy, controls, committed-but-lost response/retry, recorded review, replay, reload, desktop/mobile | Passed in installed Chrome |
